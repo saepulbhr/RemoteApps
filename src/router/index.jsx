@@ -7,6 +7,8 @@ import LoginScreen from '../screens/Login';
 import SplashScreen from '../screens/Loading/SplashScreen';
 import DashboardScreen from '../screens/Dashboard';
 import RouterMenuDevic from './RouterMenuDevic';
+import WelcomeScreen from '../screens/Login/components/WelcomeScreen';
+import RouterLogin from './RouterLogin';
 
 const Stack = createStackNavigator();
 
@@ -39,7 +41,7 @@ function Routers(props) {
           component={RouterMenuDevic}
           options={{ headerShown: false }}
         /> */}
-        {!foundToken ? (
+        {foundToken ? (
           <Stack.Screen
             name='Dashboard'
             component={RouterMenuDevic}
@@ -55,10 +57,11 @@ function Routers(props) {
           <Stack.Screen
             name='Login'
             options={{ headerShown: false }} 
-            component={LoginScreen}
+            component={RouterLogin}
           />
           
         )}
+        
       </Stack.Navigator>
     </NavigationContainer>
   );
