@@ -18,7 +18,7 @@ function Buttons(props) {
     { id: 3, title: 'Tutup' },
   ];
 
-  console.log('status', status);
+ 
   return (
     <View style={styles.container}>
       <View style={styles.containerButton}>
