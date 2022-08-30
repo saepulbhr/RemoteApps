@@ -1,0 +1,2 @@
+export const CHANGE_SPEED = "CHANGE_SPEED";
+export const CHANGE_STATUS = "CHANGE_STATUS";
