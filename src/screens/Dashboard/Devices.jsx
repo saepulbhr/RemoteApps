@@ -16,8 +16,7 @@ function Devices(props) {
   const { status, onChangeStatus } = props;
   const navigation = useNavigation();
   const menus = [{ id: 1, title: 'Gerbang', link: 'Gerbang', icon: Gate }];
-
-  // console.log('status', status);
+ 
   const handleClick = (id, link) => {
     onChangeStatus(id);
     navigation.navigate(link);
