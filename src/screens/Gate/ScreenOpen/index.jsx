@@ -1,55 +1,59 @@
-import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, View, Text } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
-import RNSpeedometer from 'react-native-speedometer';
+import React, { useEffect, useState, useContext } from "react";
+import { Image, StyleSheet, View, Text } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import Icon from "react-native-vector-icons/FontAwesome";
+import Icons from "react-native-vector-icons/MaterialCommunityIcons";
+import RNSpeedometer from "react-native-speedometer";
+import StoreContext from "../../../store/context";
+import Paho from "paho-mqtt";
+import { useNavigation } from "@react-navigation/native";
 
-import Paho from 'paho-mqtt';
-import { useNavigation } from '@react-navigation/native';
-
-const wsbroker = '192.168.200.199'; //mqtt websocket enabled broker
+const wsbroker = "192.168.200.199"; //mqtt websocket enabled broker
 const wsport = 9001; // port for above
 
 const client = new Paho.Client(
   wsbroker,
   wsport,
-  '/ws',
-  'myclientid_' + parseInt(Math.random() * 100, 10)
+  "/ws",
+  "myclientid_" + parseInt(Math.random() * 100, 10)
 );
 
 function ScreenOpen(props) {
+  const usedContext = useContext(StoreContext);
+  const { speed, handleChangeStatus } = usedContext;
+
   const navigation = useNavigation();
-  const [speed, setSpeed] = useState(70);
-  const [value, setValue] = useState('5');
-  const [status, setStatus] = useState({ status: false, message: '' });
+  const [value, setValue] = useState("5");
+  const [status, setStatus] = useState({ status: false, message: "" });
   const [payload, setPayload] = useState({
     currentPositionGate: null,
-    title: '',
-    icon: '',
+    title: "",
+    icon: "",
   });
   const [statusSetting, setStatusSetting] = useState(false);
 
   function onMessage(message) {
-    if (message.destinationName === 'iot.user_id.device_id.device')
+    if (message.destinationName === "iot.user_id.device_id.device")
       setValue(parseInt(message.payloadString));
   }
 
   var options = {
     timeout: 3,
     keepAliveInterval: 30,
-    userName: 'iot',
-    password: 'iot1407',
+    userName: "iot",
+    password: "iot1407",
     onSuccess: function (message) {
-      console.log('CONNECTION SUCCESS', message);
-      client.subscribe('iot.user_id.device_id.device', { qos: 1 });
-      setStatus({ status: true, message: 'terhubung' });
+      console.log("CONNECTION SUCCESS", message);
+      client.subscribe("iot.user_id.device_id.device", { qos: 1 });
+      setStatus({ status: true, message: "terhubung" });
+      handleChangeStatus(true);
     },
     onFailure: function (message) {
-      console.log('CONNECTION FAILURE - ' + message.errorMessage);
-      if (message.errorMessage === 'AMQJSC0001E Connect timed out.') {
+      console.log("CONNECTION FAILURE - " + message.errorMessage);
+      if (message.errorMessage === "AMQJSC0001E Connect timed out.") {
         // navigation.navigate('Error 500');
-        setStatus({ status: false, message: 'koneksi terputus' });
+        setStatus({ status: false, message: "koneksi terputus" });
+        handleChangeStatus(false);
       }
     },
   };
@@ -63,63 +67,44 @@ function ScreenOpen(props) {
     setValue(c);
     setPayload({ ...payload, currentPositionGate: c, title: title, icon });
 
-    console.log('c', c);
-
     const message = new Paho.Message(c.toString());
-    message.destinationName = 'iot.user_id.device_id.device';
+    message.destinationName = "iot.user_id.device_id.device";
     client.send(message);
   }
 
   function closeTheDoor(c) {
-    setValue('3');
+    setValue("3");
     const message = new Paho.Message((3).toString());
-    message.destinationName = 'iot.user_id.device_id.device';
+    message.destinationName = "iot.user_id.device_id.device";
     client.send(message);
   }
 
   const menus = [
-    { id: 1, title: 'kendaraan', icon: 'garage-open-variant' },
-    { id: 2, title: 'orang', icon: 'walk' },
-    { id: 3, title: 'tutup', icon: 'garage-variant-lock' },
+    { id: 1, title: "kendaraan", icon: "garage-open-variant" },
+    { id: 2, title: "orang", icon: "walk" },
+    { id: 3, title: "tutup", icon: "garage-variant-lock" },
   ];
 
   const handleOpenSetting = () => {
-    navigation.navigate('setting speed', {
-      currentSpeed: speed,
-      setSpeed: setSpeed,
-    });
+    navigation.navigate("setting gate");
   };
 
-  console.log('status', status);
   return (
     <View style={styles.root}>
-      {/* <View style={styles.containerSetting}>
-        <TouchableOpacity
-          style={styles.buttonSetting}
-          onPress={handleOpenSetting}
-        >
-          <Icons name='cog' size={18} />
-        </TouchableOpacity>
-      </View> */}
       <View style={[styles.containerContent]}>
         <View style={[styles.containerInfoSpeed]}>
           <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('setting speed', {
-                currentSpeed: speed,
-                setSpeed: setSpeed,
-              })
-            }
+            onPress={() => navigation.navigate("setting speed")}
             style={styles.buttonSetting}
           >
-            <Text style={{ fontSize: 10, textAlign: 'center' }}>kecepatan</Text>
+            {/* <Text style={{ fontSize: 10, textAlign: 'center' }}>kecepatan</Text> */}
             <View>
               <RNSpeedometer value={speed} size={35} />
               <Text
                 style={{
-                  textAlign: 'center',
+                  textAlign: "center",
                   fontSize: 11,
-                  fontWeight: 'bold',
+                  fontWeight: "bold",
                 }}
               >
                 {speed}%
@@ -128,8 +113,11 @@ function ScreenOpen(props) {
           </TouchableOpacity>
 
           <View>
-            <Text>
+            {/* <Text>
               Status : {status.status ? 'terhubung' : 'koneksi terputus'}
+            </Text> */}
+            <Text style={{ fontSize: 16, fontWeight: "600" }}>
+              Status : {payload.title}
             </Text>
           </View>
 
@@ -138,15 +126,15 @@ function ScreenOpen(props) {
             onPress={handleOpenSetting}
             // onPress={()=>navigation.navigate('setting gate')}
           >
-            <Icons name='cog' size={18} />
+            <Icons name="cog" size={18} />
           </TouchableOpacity>
         </View>
 
         <View style={styles.containerInfo}>
-          <Text style={{ fontSize: 16, fontWeight: '600' }}>
-            Status saat : {payload.title}
-          </Text>
-          <View style={{ display: 'flex', flex: 1, justifyContent: 'center' }}>
+          {/* <Text style={{ fontSize: 16, fontWeight: '600' }}>
+            Status : {payload.title}
+          </Text> */}
+          <View style={{ display: "flex", flex: 1, justifyContent: "center" }}>
             <Icons name={payload.icon} size={100} />
           </View>
         </View>
@@ -162,7 +150,7 @@ function ScreenOpen(props) {
                   backgroundColor:
                     payload.currentPositionGate == menu.id
                       ? `#73f86e`
-                      : '#FFFFFF',
+                      : "#FFFFFF",
                 },
               ]}
               key={menu.id}
@@ -185,7 +173,7 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     paddingTop: 16,
-    display: 'flex',
+    display: "flex",
     flex: 1,
   },
   containerContent: {
@@ -193,56 +181,56 @@ const styles = StyleSheet.create({
   },
   containerButton: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
   },
   containerSwipe: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
   },
   containerSetting: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "flex-end",
   },
   button: {
     padding: 16,
     borderWidth: 1,
     marginRight: 16,
-    borderTopColor: '#CCCCCC',
-    borderRightColor: '#CCCCCC',
-    borderBottomColor: '#CCCCCC',
-    borderLeftColor: '#CCCCCC',
+    borderTopColor: "#CCCCCC",
+    borderRightColor: "#CCCCCC",
+    borderBottomColor: "#CCCCCC",
+    borderLeftColor: "#CCCCCC",
     borderRadius: 10,
     marginTop: 8,
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
   },
   buttonSetting: {
     padding: 8,
     borderWidth: 1,
-    borderTopColor: '#CCCCCC',
-    borderRightColor: '#CCCCCC',
-    borderBottomColor: '#CCCCCC',
-    borderLeftColor: '#CCCCCC',
+    borderTopColor: "#CCCCCC",
+    borderRightColor: "#CCCCCC",
+    borderBottomColor: "#CCCCCC",
+    borderLeftColor: "#CCCCCC",
     borderRadius: 10,
     marginTop: 8,
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     marginBottom: 8,
   },
   containerInfo: {
-    display: 'flex',
+    display: "flex",
     flex: 1.7,
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   containerInfoSpeed: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
 
