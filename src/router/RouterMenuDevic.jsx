@@ -8,6 +8,8 @@ import ScreenOpen from '../screens/Gate/ScreenOpen';
 import SettingSpeed from '../screens/SettingSpeed';
 import LostConnection from '../screens/Errors/LostConnection';
 import RouterSettingGate from './RouterSettingGate';
+import { Button } from 'react-native-paper';
+import GateStatus from '../screens/Gate/GateStatus';
 
 const Stack = createStackNavigator();
 
@@ -19,7 +21,7 @@ function RouterMenuDevic(props) {
         gestureDirection: 'horizontal',
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
-    >
+    > 
       <Stack.Screen
         component={DashboardScreen}
         name='Home'
@@ -39,6 +41,9 @@ function RouterMenuDevic(props) {
             elevation: 0,
             shadowOpacity: 0,
           },
+          headerRight: () => (
+             <GateStatus />
+          ),
         }}
       />
 
