@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import Icons from "react-native-vector-icons/Ionicons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import StoreContext from "../../../../../store/context";
 
 function LoginForm(props) {
+  const usedContext = useContext(StoreContext)
+  const {handleSubmit}=usedContext
   const [payload, setPayload] = useState({
     username: "",
     password: "",
@@ -13,6 +17,7 @@ function LoginForm(props) {
   const onChangUsername = (data) => setPayload({ ...payload, username: data });
   const onChangePassword = (data) => setPayload({ ...payload, password: data });
   const onVisible = () => setVisible(!visible);
+  const onSubmit = ()=> handleSubmit({username:payload.username, password:payload.password})
 
   return (
     <View style={styles.root}>
@@ -43,7 +48,7 @@ function LoginForm(props) {
           />
         </View>
         <View style={styles.containerButton}>
-          <Button mode="contained">Masuk</Button>
+          <Button mode="contained" onPress={onSubmit}>Masuk</Button>
         </View>
       </View>
     </View>

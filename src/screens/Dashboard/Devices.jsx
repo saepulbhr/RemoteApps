@@ -11,9 +11,11 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Gate from '../../common/gate.png';
+import { useTheme } from 'react-native-paper';
 
 function Devices(props) {
   const { status, onChangeStatus } = props;
+ const theme = useTheme()
   const navigation = useNavigation();
   const menus = [{ id: 1, title: 'Gerbang', link: 'Gerbang', icon: Gate }];
  
@@ -29,7 +31,7 @@ function Devices(props) {
             style={[
               styles.button,
               {
-                backgroundColor: status === menu.id ? 'green' : 'white',
+                backgroundColor: status === menu.id ? theme.colors.primary : 'white',
               },
             ]}
             key={menu.id}
