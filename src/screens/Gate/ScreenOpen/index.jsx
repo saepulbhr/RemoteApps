@@ -1,169 +1,157 @@
-import React, { useEffect, useState, useContext } from "react";
-import { Image, StyleSheet, View, Text } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import Icon from "react-native-vector-icons/FontAwesome";
-import Icons from "react-native-vector-icons/MaterialCommunityIcons";
-import RNSpeedometer from "react-native-speedometer";
-import StoreContext from "../../../store/context";
-import Paho from "paho-mqtt";
-import { useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState, useContext } from 'react';
+import { PermissionsAndroid, StyleSheet, View } from 'react-native';
+import StoreContext from '../../../store/context';
+import Paho from 'paho-mqtt';
+import { useNavigation } from '@react-navigation/native';
+import SnackbarError from '../../Snackbar/Error';
+import Buttons from './Buttons';
+import Header from './Header';
+import Infromation from './Infromation';
+import NetInfo from '@react-native-community/netinfo';
 
-const wsbroker = "192.168.200.199"; //mqtt websocket enabled broker
+import WifiManager from 'react-native-wifi-reborn';
+import { Button, useTheme, Text } from 'react-native-paper';
+
+const wsbroker = '192.168.200.199'; //mqtt websocket enabled broker
 const wsport = 9001; // port for above
 
 const client = new Paho.Client(
   wsbroker,
   wsport,
-  "/ws",
-  "myclientid_" + parseInt(Math.random() * 100, 10)
+  '/ws',
+  'myclientid_' + parseInt(Math.random() * 100, 10)
 );
 
 function ScreenOpen(props) {
   const usedContext = useContext(StoreContext);
   const { speed, handleChangeStatus } = usedContext;
+  const theme = useTheme();
 
   const navigation = useNavigation();
-  const [value, setValue] = useState("5");
-  const [status, setStatus] = useState({ status: false, message: "" });
+  const [value, setValue] = useState('5');
+  const [status, setStatus] = useState({ status: false, message: '' });
+  const [isSpeed, setIsSpeed] = useState(speed);
+  const [connectionDevice, setConnectionDevice] = useState({
+    status: false,
+    message: '',
+  });
   const [payload, setPayload] = useState({
     currentPositionGate: null,
-    title: "",
-    icon: "",
+    title: '',
+    icon: '',
   });
   const [statusSetting, setStatusSetting] = useState(false);
 
   function onMessage(message) {
-    if (message.destinationName === "iot.user_id.device_id.device")
-      setValue(parseInt(message.payloadString));
+    // console.log('is message', message);
+    // if (message.destinationName === 'iot.user_id.device_id.device')
+    //   setValue(parseInt(message.payloadString));
   }
 
-  var options = {
-    timeout: 3,
-    keepAliveInterval: 30,
-    userName: "iot",
-    password: "iot1407",
-    onSuccess: function (message) {
-      console.log("CONNECTION SUCCESS", message);
-      client.subscribe("iot.user_id.device_id.device", { qos: 1 });
-      setStatus({ status: true, message: "terhubung" });
-      handleChangeStatus(true);
-    },
-    onFailure: function (message) {
-      console.log("CONNECTION FAILURE - " + message.errorMessage);
-      if (message.errorMessage === "AMQJSC0001E Connect timed out.") {
-        // navigation.navigate('Error 500');
-        setStatus({ status: false, message: "koneksi terputus" });
-        handleChangeStatus(false);
-      }
-    },
-  };
+  // var options = {
+  //   timeout: 3,
+  //   keepAliveInterval: 30,
+  //   userName: 'iot',
+  //   password: 'iot1407',
+  //   onSuccess: function (message) {
+  //     console.log('CONNECTIONs SUCCESS', message);
+  //     client.subscribe('iot.user_id.device_id.device', { qos: 1 });
+  //     client.onMessageArrived = onMessage
+  //     // setStatus({ status: true, message: "terhubung" });
+  //     handleChangeStatus(true);
+  //   },
+  //   onFailure: function (message) {
+  //     // console.log('CONNECTION FAILURE - ' + message.errorMessage);
+  //     if (message.errorMessage === 'AMQJSC0001E Connect timed out.') {
+  //       // navigation.navigate('Error 500');
+  //       // setStatus({ status: false, message: "koneksi terputus" });
+  //       setConnectionDevice({ status: true, message: 'koneksi terputus' });
+  //       handleChangeStatus(false);
+  //     }
+  //   },
+  // };
+
+  // const handleCekWifi = async () => {
+  //   console.log(PermissionsAndroid.RESULTS.GRANTED);
+  //   const granted = await PermissionsAndroid.request(
+  //     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+  //     {
+  //       title: 'Location permission is required for WiFi connections',
+  //       message:
+  //         'This app needs location permission as this is required  ' +
+  //         'to scan for wifi networks.',
+  //       buttonNegative: 'DENY',
+  //       buttonPositive: 'ALLOW',
+  //     }
+  //   );
+
+  //   if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+  //     // const enabled = await WifiManager.isEnabled()
+  //     // console.log(enabled);
+  //     await WifiManager.reScanAndLoadWifiList()
+  //     .then(result => console.log('result list wifi'))
+  //     .catch(error => error.message)
+  //   }else{
+  //     console.log('error coooy');
+  //   }
+  // }
+
+   
+
+  // useEffect(() => {
+  //   handleCekWifi();
+  // }, []);
 
   useEffect(() => {
-    client.connect(options);
+    client.connect({
+      userName: 'iot',
+      password: 'iot1407',
+      onSuccess: () => {
+        console.log('Connected!');
+        client.subscribe('iot.user_id.device_id.device', { qos: 1 });
+      },
+      onFailure: () => {
+        console.log('Failed to connect!');
+      },
+    });
+
     return () => client.disconnect();
   }, []);
 
-  function openTheDoor(c, title, icon) {
-    setValue(c);
-    setPayload({ ...payload, currentPositionGate: c, title: title, icon });
+  client.onMessageArrived = onMessage;
 
-    const message = new Paho.Message(c.toString());
-    message.destinationName = "iot.user_id.device_id.device";
-    client.send(message);
-  }
+  function openTheDoor(gerbangId, title, icon) {
+    setValue(gerbangId);
+    setPayload({
+      ...payload,
+      currentPositionGate: gerbangId,
+      title: title,
+      icon,
+    });
 
-  function closeTheDoor(c) {
-    setValue("3");
-    const message = new Paho.Message((3).toString());
-    message.destinationName = "iot.user_id.device_id.device";
-    client.send(message);
-  }
-
-  const menus = [
-    { id: 1, title: "kendaraan", icon: "garage-open-variant" },
-    { id: 2, title: "orang", icon: "walk" },
-    { id: 3, title: "tutup", icon: "garage-variant-lock" },
-  ];
-
-  const handleOpenSetting = () => {
-    navigation.navigate("setting gate");
-  };
-
+    if (client.isConnected() === false) {
+      setConnectionDevice({ status: true, message: 'koneksi terputus' });
+    } else {
+      const message = new Paho.Message(gerbangId.toString());
+      message.destinationName = 'iot.user_id.device_id.device';
+      client.send(message);
+    }
+  } 
   return (
-    <View style={styles.root}>
-      <View style={[styles.containerContent]}>
-        <View style={[styles.containerInfoSpeed]}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("setting speed")}
-            style={styles.buttonSetting}
-          >
-            {/* <Text style={{ fontSize: 10, textAlign: 'center' }}>kecepatan</Text> */}
-            <View>
-              <RNSpeedometer value={speed} size={35} />
-              <Text
-                style={{
-                  textAlign: "center",
-                  fontSize: 11,
-                  fontWeight: "bold",
-                }}
-              >
-                {speed}%
-              </Text>
-            </View>
-          </TouchableOpacity>
+    <View style={[styles.root, { backgroundColor: theme.colors.white }]}>
+      <Header title={payload.title} />
+      <Infromation payload={payload} currentIcon={payload.icon} />
 
-          <View>
-            {/* <Text>
-              Status : {status.status ? 'terhubung' : 'koneksi terputus'}
-            </Text> */}
-            <Text style={{ fontSize: 16, fontWeight: "600" }}>
-              Status : {payload.title}
-            </Text>
-          </View>
+      <Buttons payload={payload} onChangeGate={openTheDoor} />
 
-          <TouchableOpacity
-            style={styles.buttonSetting}
-            onPress={handleOpenSetting}
-            // onPress={()=>navigation.navigate('setting gate')}
-          >
-            <Icons name="cog" size={18} />
-          </TouchableOpacity>
-        </View>
+ 
 
-        <View style={styles.containerInfo}>
-          {/* <Text style={{ fontSize: 16, fontWeight: '600' }}>
-            Status : {payload.title}
-          </Text> */}
-          <View style={{ display: "flex", flex: 1, justifyContent: "center" }}>
-            <Icons name={payload.icon} size={100} />
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.containerButton}>
-        {menus.map((menu) => (
-          <View key={menu.title}>
-            <TouchableOpacity
-              style={[
-                styles.button,
-                {
-                  backgroundColor:
-                    payload.currentPositionGate == menu.id
-                      ? `#73f86e`
-                      : "#FFFFFF",
-                },
-              ]}
-              key={menu.id}
-              onPress={() => {
-                openTheDoor(menu.id, menu.title, menu.icon);
-              }}
-            >
-              <Icons name={menu.icon} size={34} />
-              <Text>{menu.title}</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </View>
+      {/* {connectionDevice.status && (
+        <SnackbarError
+          status={connectionDevice.status}
+          message={connectionDevice.message}
+        />
+      )} */}
     </View>
   );
 }
@@ -173,64 +161,12 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     paddingTop: 16,
-    display: "flex",
+    display: 'flex',
     flex: 1,
   },
-  containerContent: {
-    flex: 1.5,
-  },
-  containerButton: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  containerSwipe: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  containerSetting: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "flex-end",
-  },
-  button: {
+  error: {
     padding: 16,
-    borderWidth: 1,
-    marginRight: 16,
-    borderTopColor: "#CCCCCC",
-    borderRightColor: "#CCCCCC",
-    borderBottomColor: "#CCCCCC",
-    borderLeftColor: "#CCCCCC",
-    borderRadius: 10,
-    marginTop: 8,
-    display: "flex",
-    alignItems: "center",
-  },
-  buttonSetting: {
-    padding: 8,
-    borderWidth: 1,
-    borderTopColor: "#CCCCCC",
-    borderRightColor: "#CCCCCC",
-    borderBottomColor: "#CCCCCC",
-    borderLeftColor: "#CCCCCC",
-    borderRadius: 10,
-    marginTop: 8,
-    display: "flex",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  containerInfo: {
-    display: "flex",
-    flex: 1.7,
-    alignItems: "center",
-  },
-
-  containerInfoSpeed: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    backgroundColor: '#f5f5f5',
   },
 });
 
