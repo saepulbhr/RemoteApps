@@ -1,12 +1,18 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
+import { Avatar } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 function Header(props) {
+  const image = false;
   return (
     <View style={styles.container}>
-      <View style={styles.containerUsername}>
-        <Text style={styles.text12}>Selamat datang</Text>
-        <Text style={styles.text14}>Username</Text>
+      <View style={styles.containerUsername}> 
+        {image ? (
+          <Avatar.Icon size={36} icon='folder' />
+        ) : (
+          <Avatar.Text size={36} label='S' />
+        )}
       </View>
       <View style={styles.containerImg}>
         {/* <Image source={require('../../common/gate.png')} style={styles.image} /> */}
@@ -18,7 +24,7 @@ function Header(props) {
 const styles = StyleSheet.create({
   container: {
     paddingLeft: 16,
-    paddingRight: 16, 
+    paddingRight: 16,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -26,8 +32,8 @@ const styles = StyleSheet.create({
   containerUsername: {
     display: 'flex',
     flexGrow: 3,
-    paddingTop:16,
-    paddingBottom:16
+    paddingTop: 16,
+    paddingBottom: 16,
   },
   containerImg: {
     display: 'flex',
@@ -41,7 +47,7 @@ const styles = StyleSheet.create({
   text14: {
     fontWeight: 'bold',
     fontSize: 16,
-    letterSpacing:1
+    letterSpacing: 1,
   },
 });
 
