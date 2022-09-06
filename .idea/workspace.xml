@@ -2,9 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f4fbccbb-988c-4b35-bc9b-3dafb5181e0a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Dashboard/Devices.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Dashboard/Devices.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Errors/LostConnection/index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Errors/LostConnection/index.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Gate/ScreenClose/index.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Gate/ScreenOpen/index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Gate/ScreenOpen/index.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Gate/ScreenOpenPerson/index.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Gate/pengaturan/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Gate/pengaturan/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Login/components/WelcomeScreen/components/ButtonLogin.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Login/components/WelcomeScreen/components/ButtonLogin.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Login/components/WelcomeScreen/components/DescriptionApps.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Login/components/WelcomeScreen/components/DescriptionApps.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/SettingSpeed/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/SettingSpeed/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,9 +46,13 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="100" y="127" width="1050" height="853" key="AVDManager" timestamp="1661497581818">
+    <state x="100" y="127" width="1050" height="853" key="AVDManager" timestamp="1661933175312">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state x="100" y="127" width="1050" height="853" key="AVDManager/0.27.1920.1053@0.27.1920.1053" timestamp="1661497581818" />
+    <state x="100" y="127" width="1050" height="853" key="AVDManager/0.27.1920.1053@0.27.1920.1053" timestamp="1661933175312" />
+    <state x="284" y="252" key="run.anything.popup" timestamp="1661933143907">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="284" y="252" key="run.anything.popup/0.27.1920.1053@0.27.1920.1053" timestamp="1661933143907" />
   </component>
 </project>
