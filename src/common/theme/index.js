@@ -52,7 +52,9 @@ export const theme = {
       ...DefaultTheme.colors,
       primary: '#4951EC',
       secondary: '#f1c40f',
-      tertiary: '#a1b2c3'
+      tertiary: '#a1b2c3',
+      white:'#FFFFFF',
+      secondaryText:'#e0e0e0'
     },
     fonts: configureFonts(fontConfig),
   };
