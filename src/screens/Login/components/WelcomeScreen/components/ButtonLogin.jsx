@@ -1,10 +1,12 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Button } from 'react-native-paper';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Button, useTheme } from 'react-native-paper';
 
 function ButtonLogin(props) {
   const navigation = useNavigation();
+  const theme = useTheme();
   return (
     <View style={styles.root}>
       <View style={styles.content}>
@@ -14,6 +16,10 @@ function ButtonLogin(props) {
         >
           Login
         </Button>
+        <Text style={{ marginTop: 16, textAlign: 'center' }}>
+          <Text>Don't have an account ? </Text>
+          <Text style={{ color: theme.colors.primary }} onPress={()=>navigation.navigate('sign up')}>Sign Up</Text>
+        </Text>
       </View>
     </View>
   );
@@ -24,6 +30,8 @@ const styles = StyleSheet.create({
     flex: 0.5,
     display: 'flex',
     alignItems: 'center',
+    paddingLeft: 16,
+    paddingRight: 16,
   },
   content: {
     width: '100%',
