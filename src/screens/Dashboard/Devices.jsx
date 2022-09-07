@@ -40,15 +40,15 @@ function Devices(props) {
     wait(2000).then(() => setRefreshing(false));
   }, []);
 
-  // useEffect(() => {
-  //   NetInfo.fetch().then((state) => {
-  //     if (state.type === 'cellular') {
-  //       const wifi = (ActivityAction.WIFI_SETTINGS =
-  //         'android.settings.WIFI_SETTINGS');
-  //       startActivityAsync(wifi);
-  //     }
-  //   });
-  // }, []);
+  useEffect(() => {
+    // NetInfo.fetch().then((state) => {
+    //   if (state.type === 'cellular') {
+    //     const wifi = (ActivityAction.WIFI_SETTINGS =
+    //       'android.settings.WIFI_SETTINGS');
+    //     startActivityAsync(wifi);
+    //   }
+    // });
+  }, []);
 
   return (
     <View style={styles.container}>
